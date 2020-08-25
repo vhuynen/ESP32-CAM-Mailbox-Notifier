@@ -85,7 +85,7 @@ void setup()
   if (retrieved_access_token_gmail(gmail_credentials_refresh_token, gmail_credentials_client_id, gmail_credentials_client_secret)) {
     Serial.println("Access Token has been retreived...");
   }
-  //Temporary test for Base64 encoding
+  // Send mail with attachemet by Gmail API
   if (sendMail(email_from, email_to, email_subject_flip_door, email_body_flip_door, true)) {
     Serial.println("Send e-mail with attachement OK...");
   }
@@ -98,6 +98,10 @@ void setup()
   //  if (sendMail(email_from, email_to, email_subject_flip_door, email_body_flip_door)) {
   //    Serial.println("Mail are going...");
   //  }
+
+  if (sendMail(email_from, email_to, email_subject_door, email_body_door)) {
+    Serial.println("Mail are going...");
+  }
 
   //  if (sendSMS(url, sms_body_door)) {
   //    Serial.println("SMS sms_body_door have been sended...");

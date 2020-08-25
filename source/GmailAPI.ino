@@ -45,18 +45,8 @@ boolean sendMail(char* from, char* email_list, char* subject, char* body) {
   if ((WiFi.status() == WL_CONNECTED)) { //Check the current connection status
     // Send Mail
     HTTPClient http;
-    // Extract all recepients from a copy of email_list propertie
-    char* email_list_cpy = (char *) malloc(100);
-    strcpy(email_list_cpy, email_list);
-    char * email_tokenizer = strtok(email_list_cpy, ",");
-    String recipients = "";
-    // loop through the string to extract all other addresses
-    while ( email_tokenizer != NULL ) {
-      //printf( " %s\n", email_tokenizer ); //printing each email address
-      recipients = recipients + "to:" + (String)email_tokenizer + "\n";
-      email_tokenizer = strtok(NULL, ",");
-    }
-    Serial.println("Recipients : " + (String)recipients);
+    // Set all recipients
+    String recipients = getRecipients(email_list);
     // Compose the mail's body
     String request = "from:" + (String)from + "\n"
                      + (String)recipients
@@ -90,15 +80,16 @@ boolean sendMail(char* from, char* email_list, char* subject, char* body) {
   return result;
 }
 
-// #################################################################################################
+// ###################################################
 // Gmail send multipart mail - join one attachement
+// ###################################################
 boolean sendMail(char* from, char* email_list, char* subject, char* message, boolean attachement) {
   boolean result = false;
   String boundary = "foo_bar_baz";
   long timeout = 20000;
   if ((WiFi.status() == WL_CONNECTED)) { //Check the current connection status
-
-    String bodyMessage =  messageBody((String)from, (String)email_list, (String)subject, (String)message, boundary);
+ 
+    String bodyMessage =  messageBody((String)from, email_list, (String)subject, (String)message, boundary);
     String bodyAttachement =  attachementBody(boundary);
     String bodyEnd = String("--") + boundary + String("--\r\n");
 
@@ -199,7 +190,7 @@ String attachementBody(String boundary)
 }
 
 // Compose Body Message
-String messageBody(String from, String to, String subject, String message, String boundary) {
+String messageBody(String from, char* email_list, String subject, String message, String boundary) {
   String data;
 
   data += F("Content-Type: multipart/mixed; boundary=\"");
@@ -208,9 +199,7 @@ String messageBody(String from, String to, String subject, String message, Strin
   data += F("from:");
   data += from;
   data += F("\r\n");
-  data += F("to:");
-  data += to;
-  data += F("\r\n");
+  data += getRecipients(email_list);
   data += F("subject:");
   data += subject;
   data += F("\r\n");
@@ -222,4 +211,21 @@ String messageBody(String from, String to, String subject, String message, Strin
   data += "\r\n";
 
   return (data);
+}
+
+// Get recepients in Content-Type in MIME
+String getRecipients(char* email_list) {
+  String recipients = "";
+  // Extract all recepients from a copy of email_list propertie
+  char* email_list_cpy = (char *) malloc(100);
+  strcpy(email_list_cpy, email_list);
+  char * email_tokenizer = strtok(email_list_cpy, ",");
+  // loop through the string to extract all other addresses
+  while ( email_tokenizer != NULL ) {
+    //printf( " %s\n", email_tokenizer ); //printing each email address
+    recipients += "to:" + (String)email_tokenizer + "\r\n";
+    email_tokenizer = strtok(NULL, ",");
+  }
+  //Serial.println("Recipients : " + (String)recipients);
+  return recipients;
 }
