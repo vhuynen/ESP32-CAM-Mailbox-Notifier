@@ -16,6 +16,7 @@ boolean sendSMS(char* urls, char* msg) {
       // Call free SMS API from "FREE" provider : https://smsapi.free-mobile.fr/sendmsg
       http.begin((String)url_tokenizer + urlencode("[" + String(wake_count) + "]" + (String)msg));
       int httpCode = http.GET();
+      Serial.println("Http Code: " + (String)httpCode);
       if (httpCode > 0) {
         if (httpCode == HTTP_CODE_OK) {
           http.end(); //Free the resources
@@ -27,9 +28,9 @@ boolean sendSMS(char* urls, char* msg) {
           Serial.println("SMS not sended !!!");
         }
       } else {
-        result = false;
         http.end(); //Free the resources
         Serial.println("SMS not sended !!!");
+        return false;
       }
     }
     return result;

@@ -89,3 +89,137 @@ boolean sendMail(char* from, char* email_list, char* subject, char* body) {
   }
   return result;
 }
+
+// #################################################################################################
+// Gmail send multipart mail - join one attachement
+boolean sendMail(char* from, char* email_list, char* subject, char* message, boolean attachement) {
+  boolean result = false;
+  String boundary = "foo_bar_baz";
+  long timeout = 20000;
+  if ((WiFi.status() == WL_CONNECTED)) { //Check the current connection status
+
+    String bodyMessage =  messageBody((String)from, (String)email_list, (String)subject, (String)message, boundary);
+    String bodyAttachement =  attachementBody(boundary);
+    String bodyEnd = String("--") + boundary + String("--\r\n");
+
+    SD.begin();
+    File file = SD.open("/picture.txt");
+    if (!file) {
+      Serial.println(F("Failed to read file"));
+    }
+    //    Serial.print(F("Size picture.txt : "));
+    //    Serial.print(file.size());
+    //    Serial.println(F(" octets"));
+
+    // Compute Content-Length
+    long totalLength = bodyMessage.length() + bodyAttachement.length() + file.size() + bodyEnd.length();
+
+    String headerTxt =  header((String)from, (String)totalLength);
+
+    WiFiClientSecure client;
+    if (!client.connect("www.googleapis.com", 443))
+    {
+      return ("Connection failed");
+    }
+    //Serial.println(headerTxt + bodyMessage + bodyAttachement + bodyEnd);
+
+    client.print(headerTxt + bodyMessage + bodyAttachement);
+    // send file contents to Gmail
+    // upload the file in 1350 byte chunks
+    while (file.available()) {
+      int nextPacketSize = file.available();
+      if (nextPacketSize > 1350) {
+        nextPacketSize = 1350;
+      }
+      String buffer = "";
+      for (int i = 0; i < nextPacketSize; i++) {
+        buffer += (char)file.read();
+      }
+      client.print(buffer);
+    }
+    client.print("\r\n" + bodyEnd);
+
+    file.close();
+    SD.end();
+    delay(20);
+
+    // Handle the Http response
+    long tOut = millis() + timeout;
+    while (client.connected() && tOut > millis())
+    {
+      if (client.available())
+      {
+        String response = client.readStringUntil('\r');
+        if (response.endsWith("200 OK")) {
+          Serial.println("Sending mail with attachment successfully : " + response);
+          break;
+        } else {
+          Serial.println("Somethings wrong with Gmail API: " + response);
+          break;
+        }
+      }
+    }
+    client.flush();
+    client.stop();
+    return true;
+  }
+}
+// Compose header
+String header(String from, String length)
+{
+  String  data;
+  data =  F("POST /upload/gmail/v1/users/");
+  data += from;
+  data += F("/messages/send?uploadType=multipart HTTP/1.1\r\n");
+  data += F("Host: www.googleapis.com\r\n");
+  data += F("content-length: ");
+  data += String(length);
+  data += F("\r\n");
+  data += F("Content-Type: message/rfc822\r\n");
+  data += F("Authorization: ");
+  data += bearer;
+  data += "\r\n";
+  data += "\r\n";
+  return (data);
+}
+
+// Compose Body Attachement
+String attachementBody(String boundary)
+{
+  String data;
+  data = "\r\n--";
+  data += boundary;
+  data += F("\r\n");
+  data += F("Content-Type: image/png\r\n");
+  data += F("MIME-Version: 1.0\r\n");
+  data += F("Content-Transfer-Encoding: base64\r\n");
+  data += F("Content-Disposition: attachment; filename=\"picture.png\"\r\n");
+  data += F("\r\n");
+  return (data);
+}
+
+// Compose Body Message
+String messageBody(String from, String to, String subject, String message, String boundary) {
+  String data;
+
+  data += F("Content-Type: multipart/mixed; boundary=\"");
+  data += boundary;
+  data += F("\"\r\n");
+  data += F("from:");
+  data += from;
+  data += F("\r\n");
+  data += F("to:");
+  data += to;
+  data += F("\r\n");
+  data += F("subject:");
+  data += subject;
+  data += F("\r\n");
+  data += F("\r\n--");
+  data += boundary;
+  data += "\r\n";
+  data += "\r\n";
+  data += message;
+  data += "\r\n";
+
+  return (data);
+}

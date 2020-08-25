@@ -7,6 +7,11 @@
   Mailbox Notifier
 */
 
+// Import external base64 API C
+extern "C" {
+#include "crypto/base64.h"
+}
+
 #include <WiFi.h>
 #include <HTTPClient.h>
 #define ARDUINOJSON_ENABLE_COMMENTS 1
@@ -15,7 +20,7 @@
 #include <SPI.h>
 #include <esp_bt.h>
 
-String bearer;
+// Variables persisted into RTC memory
 RTC_DATA_ATTR boolean starting = true;
 RTC_DATA_ATTR int wake_count = 0;
 
@@ -24,15 +29,16 @@ char* filename_properties = "/mailbox.cfg";
 
 // WiFi Properties
 boolean wifi_ip_static = false;
-char* wifi_ip = (char *) malloc(30);
-char* wifi_gateway = (char *) malloc(30);
-char* wifi_subnet = (char *) malloc(30);
-char* wifi_dns_ip_primary = (char *) malloc(30);
-char* wifi_dns_ip_secondary = (char *) malloc(30);
+char* wifi_ip = (char *) malloc(20);
+char* wifi_gateway = (char *) malloc(20);
+char* wifi_subnet = (char *) malloc(20);
+char* wifi_dns_ip_primary = (char *) malloc(20);
+char* wifi_dns_ip_secondary = (char *) malloc(20);
 char* wifi_ssid = (char *) malloc(50);
 char* wifi_security_code = (char *) malloc(50);
 
 // OAuth Credentials for Gmail API
+String bearer; // Access Token retreived from OAuth Google API
 char* gmail_credentials_refresh_token = (char *) malloc(150);
 char* gmail_credentials_client_id  = (char *) malloc(100);
 char* gmail_credentials_client_secret  = (char *) malloc(50);
@@ -56,9 +62,15 @@ char* sms_body_flip_door  = (char *) malloc(100);
 long retry = 1;
 long overtime_open_door = 10000;
 
+// Relay that control the power of the SD card
+const int relay = 26;
 
 void setup()
 {
+
+  // Initialize relay pin
+  pinMode(relay, OUTPUT);
+  digitalWrite(relay, LOW);
 
   Serial.begin(9600);
   Serial.println("starting init : " + (String)starting);
@@ -66,29 +78,44 @@ void setup()
   if (starting) {
     Serial.println("initialization of properties");
     initProperties(filename_properties);
-
   }
 
   // Starting the WiFi
-  connectToWiFi(wifi_ssid, wifi_security_code, wifi_ip_static, wifi_ip ,wifi_gateway, wifi_subnet, wifi_dns_ip_primary, wifi_dns_ip_secondary);
-
-  Serial.println("Sending mail...");
-  Serial.println("starting status: " + (String)starting);
+  connectToWiFi(wifi_ssid, wifi_security_code, wifi_ip_static, wifi_ip , wifi_gateway, wifi_subnet, wifi_dns_ip_primary, wifi_dns_ip_secondary);
   if (retrieved_access_token_gmail(gmail_credentials_refresh_token, gmail_credentials_client_id, gmail_credentials_client_secret)) {
     Serial.println("Access Token has been retreived...");
   }
-  if (sendMail(email_from, email_to, email_subject_door, email_body_door)) {
-    Serial.println("Mail are going...");
-  }
-  if (sendSMS(url, sms_body_door)) {
-    Serial.println("SMS sms_body_door have been sended...");
-  }
-  if (sendSMS(url, sms_body_flip_door)) {
-    Serial.println("SMS sms_body_flip_door have been sended...");
+  //Temporary test for Base64 encoding
+  if (sendMail(email_from, email_to, email_subject_flip_door, email_body_flip_door, true)) {
+    Serial.println("Send e-mail with attachement OK...");
   }
 
+  //  Serial.println("Sending mail...");
+  //  Serial.println("starting status: " + (String)starting);
+  //  if (retrieved_access_token_gmail(gmail_credentials_refresh_token, gmail_credentials_client_id, gmail_credentials_client_secret)) {
+  //    Serial.println("Access Token has been retreived...");
+  //  }
+  //  if (sendMail(email_from, email_to, email_subject_flip_door, email_body_flip_door)) {
+  //    Serial.println("Mail are going...");
+  //  }
+
+  //  if (sendSMS(url, sms_body_door)) {
+  //    Serial.println("SMS sms_body_door have been sended...");
+  //  }
+  //    if (sendSMS(url, sms_body_flip_door)) {
+  //      Serial.println("SMS sms_body_flip_door have been sended...");
+  //    }
+
+  Serial.println("WiFi IP Static : " + (String)wifi_ip_static);
+  if (wifi_ip_static) {
+    Serial.println("WiFi IP Static  : " + String(wifi_ip));
+    Serial.println("WiFi Gateway : " + String(wifi_gateway));
+    Serial.println("WiFi Subnet  : " + String(wifi_subnet));
+    Serial.println("WiFi DNS IP Primary : " + String(wifi_dns_ip_primary));
+    Serial.println("WiFi DNS IP Secondary  : " + String(wifi_dns_ip_secondary));
+  }
   Serial.println("WiFi SSID : " + String(wifi_ssid));
-  Serial.println("Passphrase  : " + String(wifi_security_code));
+  Serial.println("WiFi Passphrase  : " + String(wifi_security_code));
 
   Serial.println("Access Token : " + String(gmail_credentials_refresh_token));
   Serial.println("Client ID : " + String(gmail_credentials_client_id));
@@ -104,7 +131,7 @@ void setup()
   Serial.println("Retry : " + String(retry));
 
   if (sms == true) {
-  Serial.println("sms : " + String(sms));
+    Serial.println("sms : " + String(sms));
     Serial.println("url : " + String(url));
     Serial.println("sms great door : " + String(sms_body_door));
     Serial.println("sms flip door : " + String(sms_body_flip_door));
