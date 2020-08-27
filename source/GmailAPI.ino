@@ -83,18 +83,21 @@ boolean sendMail(char* from, char* email_list, char* subject, char* body) {
 // ###################################################
 // Gmail send multipart mail - join one attachement
 // ###################################################
-boolean sendMail(char* from, char* email_list, char* subject, char* message, boolean attachement) {
+boolean sendMail(char* from, char* email_list, char* subject, char* message, String pathFile) {
   boolean result = false;
   String boundary = "foo_bar_baz";
   long timeout = 20000;
   if ((WiFi.status() == WL_CONNECTED)) { //Check the current connection status
- 
+
+    // Encode file attachment in Base64
+   encodeFile(pathFile);
+    
     String bodyMessage =  messageBody((String)from, email_list, (String)subject, (String)message, boundary);
     String bodyAttachement =  attachementBody(boundary);
     String bodyEnd = String("--") + boundary + String("--\r\n");
 
     SD.begin();
-    File file = SD.open("/picture.txt");
+    File file = SD.open("/tmp/encode.b64");
     if (!file) {
       Serial.println(F("Failed to read file"));
     }
@@ -110,7 +113,7 @@ boolean sendMail(char* from, char* email_list, char* subject, char* message, boo
     WiFiClientSecure client;
     if (!client.connect("www.googleapis.com", 443))
     {
-      return ("Connection failed");
+      return false;
     }
     //Serial.println(headerTxt + bodyMessage + bodyAttachement + bodyEnd);
 
@@ -184,7 +187,7 @@ String attachementBody(String boundary)
   data += F("Content-Type: image/png\r\n");
   data += F("MIME-Version: 1.0\r\n");
   data += F("Content-Transfer-Encoding: base64\r\n");
-  data += F("Content-Disposition: attachment; filename=\"picture.png\"\r\n");
+  data += F("Content-Disposition: attachment; filename=\"mailbox.png\"\r\n");
   data += F("\r\n");
   return (data);
 }
@@ -213,7 +216,7 @@ String messageBody(String from, char* email_list, String subject, String message
   return (data);
 }
 
-// Get recepients in Content-Type in MIME
+// Get recipients in Content-Type in MIME
 String getRecipients(char* email_list) {
   String recipients = "";
   // Extract all recepients from a copy of email_list propertie

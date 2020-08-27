@@ -19,21 +19,46 @@ void goToDeepSleep()
   esp_deep_sleep_start();
 }
 
+// Compose IP Address from properties
+IPAddress getIPAddressFromString(char* ipStr) {
+  int part_1;
+  int part_2;
+  int part_3;
+  int part_4;
+
+  char* ip_cpy = (char *) malloc(15);
+  strcpy(ip_cpy, ipStr);
+  char * ip_tokenizer = strtok(ip_cpy, ".");
+  int count = 1;
+  while ( ip_tokenizer != NULL ) {
+    if (count == 1) {
+      part_1 = atoi(ip_tokenizer);
+    }
+    if (count == 2) {
+      part_2 = atoi(ip_tokenizer);
+    }
+    if (count == 3) {
+      part_3 = atoi(ip_tokenizer);
+    }
+    if (count == 4) {
+      part_4 = atoi(ip_tokenizer);
+    }
+    ip_tokenizer = strtok(NULL, ".");
+    count++;
+  }
+  return IPAddress(part_1, part_2, part_3, part_4);
+}
+
 void connectToWiFi(char* wifi_ssid, char* wifi_security_code, boolean wifi_ip_static, char* wifi_ip, char* wifi_gateway, char* wifi_subnet, char* wifi_dns_ip_primary, char* wifi_dns_ip_secondary) {
   unsigned long wifi_timeout = 10000; // 10 seconds in milliseconds
   Serial.print("Connecting to WiFi... ");
   if (wifi_ip_static) {
-    //    IPAddress ip = ip.fromString(wifi_ip);
-    //    IPAddress gateway = gateway.fromString(wifi_gateway);
-    //    IPAddress subnet = subnet.fromString(wifi_subnet);
-    //    IPAddress primaryDNS = primaryDNS.fromString(wifi_dns_ip_primary); //optional
-    //    IPAddress secondaryDNS = secondaryDNS.fromString(wifi_dns_ip_secondary); //optional
+    IPAddress ip = getIPAddressFromString(wifi_ip);
+    IPAddress gateway = getIPAddressFromString(wifi_gateway);
+    IPAddress subnet = getIPAddressFromString(wifi_subnet);
+    IPAddress primaryDNS = getIPAddressFromString(wifi_dns_ip_primary); //optional
+    IPAddress secondaryDNS = getIPAddressFromString(wifi_dns_ip_secondary); //optional
 
-    IPAddress ip(192, 168, 5, 141);
-    IPAddress gateway(192, 168, 5, 1);
-    IPAddress subnet(255, 255, 255, 0);
-    IPAddress primaryDNS(192, 168, 5, 1); //optional
-    IPAddress secondaryDNS(192, 168, 5, 1); //optional
     if (!WiFi.config(ip, gateway, subnet, primaryDNS, secondaryDNS)) {
       Serial.println("STA Failed to configure");
     }
@@ -150,37 +175,37 @@ unsigned char h2int(char c)
   return (0);
 }
 
-// #################################################################################################
-// Temporary function for test sending picture
-int base64_enc_len(int plainLen) {
-  int n = plainLen;
-  return (n + 2 - ((n + 2) % 3)) / 3 * 4;
-}
-
-void encodeTest() {
+// #############################################
+// Encode content file in Base64
+// #############################################
+void encodeFile(String filePath) {
 
   SD.begin();
-  // open the file for reading:
-  File file = SD.open("/picture.png");
-  const char* toEncode;
-  size_t outputLength;
-  
-  while (file.available()) {
-    toEncode = file.readString().c_str();
-  }
+  // Open the file to be encoded
+  File fileIn = SD.open(filePath);
+  File fileOut;
+  SD.remove(pathFileBase64);
+  fileOut = SD.open(pathFileBase64, FILE_APPEND);
 
-  if (!file) {
-    Serial.println(F("Failed to read file"));
-    return;
+  // upload the file in 1350 byte chunks
+  while (fileIn.available()) {
+    int nextPacketSize = fileIn.available();
+    if (nextPacketSize > 1350) {
+      nextPacketSize = 1350;
+    }
+    String toEncode = "";
+    for (int i = 0; i < nextPacketSize; i++) {
+      toEncode += (char)fileIn.read();
+    }
+    size_t outputLength;
+    unsigned char * encoded = base64_encode((const unsigned char *)toEncode.c_str(), nextPacketSize, &outputLength);
+    // Need to open and close file each time to flush correctly the buffer. The function file.flush() doesn't work in my case.
+    fileOut = SD.open(pathFileBase64, FILE_APPEND);
+      fileOut.print((char *)encoded);
+    fileOut.close();
+    free(encoded);
   }
-
-  Serial.println("Longeur chaine à encoder :" + static_cast<int>(strlen(toEncode)));
-  Serial.printf("%.*s", 10000, toEncode);
-  unsigned char * encoded = base64_encode((const unsigned char *)toEncode, strlen(toEncode), &outputLength);
- 
-  Serial.print("Length of encoded message: ");
-  Serial.println(outputLength);
- 
-  Serial.printf("%.*s", outputLength, encoded);
-  free(encoded);
+  fileIn.close();
+  fileOut.close();
+  SD.end();
 }
