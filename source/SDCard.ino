@@ -22,7 +22,6 @@ JsonObject getJSonFromFile(DynamicJsonDocument *doc, String filename, bool force
       Serial.println(error.c_str());
 
       if (forceCleanONJsonError) {
-        digitalWrite(relay, HIGH);
         return doc->to<JsonObject>();
       }
     }
@@ -41,8 +40,6 @@ JsonObject getJSonFromFile(DynamicJsonDocument *doc, String filename, bool force
 
 void initProperties(char* filename_properties) {
 
-  // Power On the SD Card
-  digitalWrite(relay, HIGH);
   delay(2000);
   // Initialize SD library
   while (!SD.begin()) {
@@ -63,7 +60,7 @@ void initProperties(char* filename_properties) {
     strcpy(wifi_subnet, doc["wifi"]["subnet"].as<char*>()); // "Subnet"
     strcpy(wifi_dns_ip_primary, doc["wifi"]["dns_ip_primary"].as<char*>()); // "Subnet"
     strcpy(wifi_dns_ip_secondary, doc["wifi"]["dns_ip_secondary"].as<char*>()); // "Subnet"
-     Serial.println("Fin Chargement des Setting IP");
+    Serial.println("Fin Chargement des Setting IP");
   }
   strcpy(wifi_ssid, doc["wifi"]["ssid"].as<char*>()); // "SSID"
   strcpy(wifi_security_code, doc["wifi"]["security_code"].as<char*>()); // "Passphrase"
@@ -96,8 +93,6 @@ void initProperties(char* filename_properties) {
 
   //printFile(filename_properties);
   SD.end();
-  // Power Off the SD Card
-  digitalWrite(relay, LOW);
 }
 
 // Prints the content of a file to the Serial
@@ -117,4 +112,42 @@ void printFile(const char *properties) {
 
   // Close the file
   file.close();
+}
+
+// Print all properties loaded by the initProperties function
+void printAllProperties() {
+
+  Serial.println("WiFi IP Static : " + (String)wifi_ip_static);
+  if (wifi_ip_static) {
+    Serial.println("WiFi IP Static  : " + String(wifi_ip));
+    Serial.println("WiFi Gateway : " + String(wifi_gateway));
+    Serial.println("WiFi Subnet  : " + String(wifi_subnet));
+    Serial.println("WiFi DNS IP Primary : " + String(wifi_dns_ip_primary));
+    Serial.println("WiFi DNS IP Secondary  : " + String(wifi_dns_ip_secondary));
+  }
+  Serial.println("WiFi SSID : " + String(wifi_ssid));
+  Serial.println("WiFi Passphrase  : " + String(wifi_security_code));
+
+  Serial.println("Refresh Token : " + String(gmail_credentials_refresh_token));
+  Serial.println("Client ID : " + String(gmail_credentials_client_id));
+  Serial.println("Client Secret : " + String(gmail_credentials_client_secret));
+
+  Serial.println("Email : " + String(email));
+  Serial.println("From : " + String(email_from));
+  Serial.println("To : " + String(email_to));
+  Serial.println("Subject door : " + String(email_subject_door));
+  Serial.println("Body door : " + String(email_body_door));
+  Serial.println("Subject flip door : " + String(email_subject_flip_door));
+  Serial.println("Body flip door : " + String(email_body_flip_door));
+  Serial.println("Retry : " + String(retry));
+
+  if (sms == true) {
+    Serial.println("sms : " + String(sms));
+    Serial.println("url : " + String(url));
+    Serial.println("sms great door : " + String(sms_body_door));
+    Serial.println("sms flip door : " + String(sms_body_flip_door));
+  }
+
+  Serial.println("Retry : " + String(retry));
+  Serial.println("Timeout overtime open door : " + String(overtime_open_door));
 }

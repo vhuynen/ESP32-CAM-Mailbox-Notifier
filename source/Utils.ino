@@ -1,5 +1,5 @@
 // How many minutes the ESP should sleep in minutes
-const long deep_sleep_time = 1440;
+const long deep_sleep_time = 1;
 
 void goToDeepSleep()
 {
@@ -201,11 +201,38 @@ void encodeFile(String filePath) {
     unsigned char * encoded = base64_encode((const unsigned char *)toEncode.c_str(), nextPacketSize, &outputLength);
     // Need to open and close file each time to flush correctly the buffer. The function file.flush() doesn't work in my case.
     fileOut = SD.open(pathFileBase64, FILE_APPEND);
-      fileOut.print((char *)encoded);
+    fileOut.print((char *)encoded);
     fileOut.close();
     free(encoded);
   }
   fileIn.close();
   fileOut.close();
   SD.end();
+}
+
+// Update the firmware from SD Card
+boolean updateFirmware() {
+  boolean result = false;
+  SD.begin();
+  if (SD.exists("/firmware/mailbox.bin")) {
+    File firmware = SD.open("/firmware/mailbox.bin");
+    if (!Update.begin(UPDATE_SIZE_UNKNOWN)) { //start with max available size
+      Update.printError(Serial);
+      return result;
+    }
+    while (firmware.available()) {
+      uint8_t buffer[128];
+      firmware.read((uint8_t *)buffer, 128);
+      Update.write(buffer, sizeof(buffer));
+    }
+    if (Update.end(true)) {
+      Serial.printf("Update Success: %u Ko\n", firmware.size());
+      result = true;
+    } else {
+      Update.printError(Serial);
+    }
+  }
+  SD.remove("/firmware/mailbox.bin");
+  SD.end();
+  return result;
 }
