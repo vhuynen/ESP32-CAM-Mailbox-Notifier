@@ -1,20 +1,37 @@
 // How many minutes the ESP should sleep in minutes
 const long deep_sleep_time = 1;
 
+// Deep Sleep when everythings is right
 void goToDeepSleep()
 {
   Serial.println("Going to sleep...");
   WiFi.disconnect(true);
   WiFi.mode(WIFI_OFF);
   btStop();
-
-  //adc_power_off();
-  //  esp_wifi_stop();
+  adc_power_off();
   esp_bt_controller_disable();
 
-  // Configure the timer to wake us up!
-  esp_sleep_enable_timer_wakeup(deep_sleep_time * 60L * 1000000L);
+  // Prepare settings before going to sleep
+  esp_sleep_enable_ext1_wakeup(BUTTON_PIN_BITMASK, ESP_EXT1_WAKEUP_ANY_HIGH);
+  esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_ON);
+  gpio_pulldown_en(GPIO_NUM_13);
+  gpio_pulldown_en(GPIO_NUM_14);
+  delay(3000);
+  // Go to sleep! Zzzz
+  esp_deep_sleep_start();
+}
 
+// Deep Sleep when something's wrong
+void goToDeepSleepError()
+{
+  Serial.println("Going to sleep...");
+  WiFi.disconnect(true);
+  WiFi.mode(WIFI_OFF);
+  btStop();
+  adc_power_off();
+  esp_bt_controller_disable();
+
+  delay(3000);
   // Go to sleep! Zzzz
   esp_deep_sleep_start();
 }
@@ -235,4 +252,12 @@ boolean updateFirmware() {
   SD.remove("/firmware/mailbox.bin");
   SD.end();
   return result;
+}
+
+// Set the pin which woke up the controller
+void setGPIOWakeUp() {
+  uint64_t GPIO_reason = esp_sleep_get_ext1_wakeup_status();
+  Serial.print("GPIO that triggered the wake up: GPIO ");
+  Serial.println((log(GPIO_reason)) / log(2), 0);
+  pinWakeUp = (log(GPIO_reason)) / log(2);
 }
