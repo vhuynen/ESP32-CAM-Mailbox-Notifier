@@ -207,7 +207,7 @@ String messageBody(String from, char* email_list, String subject, String message
   data += F("\r\n");
   data += getRecipients(email_list);
   data += F("subject:");
-  data += subject;
+  data += "[" + String(wake_count) + "]" + subject;
   data += F("\r\n");
   data += F("\r\n--");
   data += boundary;

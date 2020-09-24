@@ -5,14 +5,7 @@ const long deep_sleep_time = 1;
 void goToDeepSleep()
 {
   Serial.println("Going to sleep...");
- 
-  // Turned Off flashlight before snooze
-//  while (!SD_MMC.begin("/sdcard", true)) {
-//    Serial.println(F("Failed to initialize SD library"));
-//    delay(1000);
-//  }
-//  digitalWrite(4, LOW);
-  
+
   WiFi.disconnect(true);
   WiFi.mode(WIFI_OFF);
   btStop();
@@ -20,11 +13,11 @@ void goToDeepSleep()
   esp_bt_controller_disable();
 
   // Prepare settings before going to sleep
-  esp_sleep_enable_ext1_wakeup(BUTTON_PIN_BITMASK, ESP_EXT1_WAKEUP_ANY_HIGH);
+  esp_sleep_enable_ext0_wakeup(GPIO_NUM_12, 0);
   esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_ON);
 
   rtc_gpio_hold_en(GPIO_NUM_4);
-  gpio_pulldown_en(GPIO_NUM_12);
+  gpio_pullup_en(GPIO_NUM_12);
   delay(3000);
   // Go to sleep! Zzzz
   esp_deep_sleep_start();
@@ -38,7 +31,7 @@ void goToDeepSleepError()
   // Turned Off flashlight before snooze
   //digitalWrite(4, LOW);
   rtc_gpio_hold_en(GPIO_NUM_4);
-  
+
   WiFi.disconnect(true);
   WiFi.mode(WIFI_OFF);
   btStop();

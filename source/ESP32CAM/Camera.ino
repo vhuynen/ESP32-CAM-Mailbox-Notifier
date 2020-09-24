@@ -71,7 +71,7 @@ void takeAndSavePicture(String path) {
   Serial.println("Ok!");
 
   // Turn on the Flash Light before taking the picture
-   digitalWrite(4, HIGH);
+  digitalWrite(4, HIGH);
   // Take Picture with Camera
   camera_fb_t  * fb = esp_camera_fb_get();
 
@@ -97,7 +97,7 @@ void takeAndSavePicture(String path) {
 
   File file = SD_MMC.open(path, FILE_WRITE);
   if (!file) {
-  Serial.println("Failed to open file in writing mode");
+    Serial.println("Failed to open file in writing mode");
   }
   else {
     file.write(fb->buf, fb->len); // payload (image), payload length

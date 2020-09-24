@@ -1,6 +1,6 @@
 /**
    Function to deserialize file from SD
-   DynamicJsonDocument doc(1024);
+   DynamicJsonDocument doc(2048);
    JsonObject obj;
    obj = getJSonFromFile(&amp;doc, filename);
 */
