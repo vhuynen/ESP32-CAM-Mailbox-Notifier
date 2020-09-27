@@ -68,11 +68,9 @@ char* sms_body_door  = (char *) malloc(100);
 char* sms_body_flip_door  = (char *) malloc(100);
 
 // Control properties
-long retry = 1;
+long retry = 1; // For future use
 long overtime_open_door = 10000;
 
-// Pin which handle the wake up
-int pinWakeUp = -1;
 // Pin which is used when you fetch your mail
 int pinFetchMail = 16;
 
@@ -92,10 +90,10 @@ void setup()
   gpio_hold_dis(GPIO_NUM_4);
   // Flash Light Pin
   pinMode (GPIO_NUM_4, OUTPUT);
-  
+
   // This feature don't work with ESP32 CAM, maybe for a future version
   // Only for the bootstrap, update the firmware from SD Card if a new one exists
-  if (wake_count == 0) {
+  if (wake_count == -1) {
     if (updateFirmware()) {
       Serial.println("The firmware has been updated...");
       // Turn on built-in Led after update firmware successfully
@@ -186,7 +184,10 @@ void loop()
     takeAndSavePicture(path);
     // Send mail with picture attachment
     sendMail(email_from, email_to, email_subject_door, email_body_door, path);
-
+    // Send SMS notification
+    if (sms) {
+      sendSMS(url, sms_body_door);
+    }
     // Everythings is OK, you can sleep quietly
     goToDeepSleep();
   }
