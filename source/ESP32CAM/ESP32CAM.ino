@@ -81,11 +81,20 @@ void setup()
 {
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); //disable brownout detector
   Serial.begin(115200);
-  // Initialize SD library 1 bit
+
+  // Disabling GPIO13's states after wake-up before SD Card initialization
+  gpio_hold_dis(GPIO_NUM_13);
+
+  // Initialize SD library 1-bit SD mode
   while (!SD_MMC.begin("/sdcard", true)) {
     Serial.println(F("Failed to initialize SD library"));
     delay(1000);
   }
+
+  // You can use GPIO13 only after release it by SD Card initialization in 1-bit SD mode
+  pinMode (GPIO_NUM_13, OUTPUT);
+  digitalWrite(GPIO_NUM_13, LOW);
+
   // Disable state flash light pin after wake up
   gpio_hold_dis(GPIO_NUM_4);
   // Flash Light Pin
@@ -151,11 +160,22 @@ void loop()
 
   // Ignore wake up when you fetch your mail, press the button to ignore the opening.
   if (digitalRead(GPIO_NUM_16) == 0) {
+    unsigned long previousMillis = 0;
     while (digitalRead(GPIO_NUM_12) == 0)  {
-      // Turn on the build-in Led when you fetch you mail
-      pinMode (GPIO_NUM_33, OUTPUT);
-      digitalWrite(GPIO_NUM_33, LOW);
+      //Blinking LED handled by the GPIO13 when you fetch you mail
+      unsigned long currentMillis = millis();
+      if (currentMillis - previousMillis >= 2000) {
+        // Save the last time the LED have blinked
+        previousMillis = currentMillis;
+        // If the LED is off, turn it on and vice-versa
+        if (digitalRead(GPIO_NUM_13) == HIGH) {
+          digitalWrite(GPIO_NUM_13, LOW);
+        } else {
+          digitalWrite(GPIO_NUM_13, HIGH);
+        }
+      }
       if (millis() > overtime_open_door) {
+        digitalWrite(GPIO_NUM_13, LOW);
         // Connect to WiFI
         connectToWiFi(wifi_ssid, wifi_security_code, wifi_ip_static, wifi_ip , wifi_gateway, wifi_subnet, wifi_dns_ip_primary, wifi_dns_ip_secondary);
         // Retreived Access Token
@@ -165,8 +185,6 @@ void loop()
         // Going to sleep until reset or restart
         goToDeepSleepError();
       }
-      // Turn off the build-in Led
-      pinMode (GPIO_NUM_33, HIGH);
     }
     // Everythings is OK, you can sleep quietly
     goToDeepSleep();
