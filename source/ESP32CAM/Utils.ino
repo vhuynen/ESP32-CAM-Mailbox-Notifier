@@ -16,7 +16,16 @@ void goToDeepSleep()
   esp_sleep_enable_ext0_wakeup(GPIO_NUM_12, 0);
   esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_ON);
 
+  // Turn-off the GPIO4 and sustain its state during the deep sleep mode
+  pinMode (GPIO_NUM_4, OUTPUT);
+  digitalWrite(GPIO_NUM_4, LOW);
   rtc_gpio_hold_en(GPIO_NUM_4);
+
+  // Turn-off the GPIO13 and sustain its state during the deep sleep mode
+  pinMode (GPIO_NUM_13, OUTPUT);
+  digitalWrite(GPIO_NUM_13, LOW);
+  rtc_gpio_hold_en(GPIO_NUM_13);
+
   gpio_pullup_en(GPIO_NUM_12);
   delay(3000);
   // Go to sleep! Zzzz
@@ -28,9 +37,10 @@ void goToDeepSleepError()
 {
   Serial.println("Going to sleep...");
 
-  // Turned Off flashlight before snooze
-  //digitalWrite(4, LOW);
+  // Sustain GPIO4's state for the deep sleep
   rtc_gpio_hold_en(GPIO_NUM_4);
+  // Sustain GPIO13's state for the deep sleep
+  rtc_gpio_hold_en(GPIO_NUM_13);
 
   WiFi.disconnect(true);
   WiFi.mode(WIFI_OFF);
@@ -263,12 +273,4 @@ boolean updateFirmware() {
   SD_MMC.remove("/firmware/mailbox.bin");
   SD_MMC.end();
   return result;
-}
-
-// Set the pin which woke up the controller
-void setGPIOWakeUp() {
-  uint64_t GPIO_reason = esp_sleep_get_ext1_wakeup_status();
-  Serial.print("GPIO that triggered the wake up: GPIO ");
-  Serial.println((log(GPIO_reason)) / log(2), 0);
-  pinWakeUp = (log(GPIO_reason)) / log(2);
 }
