@@ -20,7 +20,7 @@ I will not expose how to use a NodeMCU in this article, there are plenty of [tut
       - [SMS Settings](#sms-settings)
       - [Control](#control)
     + [External antenna](#external-antenna)
-  * [How does it work ?](#how-does-it-work--)
+  * [How does it work ?](#how-does-it-work-)
     + [Boot](#boot)
     + [Fetch mail](#fetch-mail)
     + [You have got mail](#you-have-got-mail)
