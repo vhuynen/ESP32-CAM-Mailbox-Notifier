@@ -7,7 +7,41 @@ I will not expose how to use a NodeMCU in this article, there are plenty of [tut
 
 **µc**: microcontroller
 
-[TOC]
+## Contents table
+- [ESP32-CAM - Mailbox Notifier](#esp32-cam---mailbox-notifier)
+  * [Contents table](#contents-table)
+  * [Electronic materials](#electronic-materials)
+  * [Prerequisites](#prerequisites)
+    + [SD Card](#sd-card)
+      - [Format](#format)
+      - [Directory tree](#directory-tree)
+    + [Configuration File](#configuration-file)
+      - [WiFi](#wifi)
+      - [Gmail Credentials](#gmail-credentials)
+      - [Email settings](#email-settings)
+      - [SMS Settings](#sms-settings)
+      - [Control](#control)
+    + [External antenna](#external-antenna)
+  * [How does it work ?](#how-does-it-work-)
+    + [Boot](#boot)
+    + [Fetch mail](#fetch-mail)
+    + [You have got mail](#you-have-got-mail)
+  * [Go further](#go-further)
+    + [JSON Config file on SD Card](#json-config-file-on-sd-card)
+    + [OTA - Over The Air](#ota---over-the-air)
+    + [Gmail API](#gmail-api)
+      - [Retrieve an Access Token](#retrieve-an-access-token)
+      - [Send an email with attachment](#send-an-email-with-attachment)
+    + [Power Consumption](#power-consumption)
+    + [SD Card in 1-bit SD mode](#sd-card-in-1-bit-sd-mode)
+    + [WiFi](#wifi-1)
+      - [Power saving](#power-saving)
+      - [Static IP Address](#static-ip-address)
+    + [Camera OV2640](#camera-ov2640)
+  * [Gallery](#gallery)
+    + [Inside the Box](#inside-the-box)
+    + [Power Supply](#power-supply)
+    + [Solar Panel](#solar-panel)
 
 ## Electronic materials
 
@@ -388,15 +422,15 @@ In order to verify the normal operation of your camera's probe, I advise you to 
 
 ### Inside the Box
 
-![Inside of the mailbox](gallery/inside.png)
+![Inside of the mailbox](docs/gallery/inside.png)
 
 ### Power Supply
 
-![](/gallery/power_supply.png)
+![](docs/gallery/power_supply.png)
 
 ### Solar Panel
 
-![](/gallery/solar_panel.png)
+![](docs/gallery/solar_panel.png)
 
 
 
