@@ -152,7 +152,7 @@ void loop()
       // Retreived Access Token
       retrieved_access_token_gmail(gmail_credentials_refresh_token, gmail_credentials_client_id, gmail_credentials_client_secret);
       // Send error mail by Gmail API
-      sendMail(email_from, email_to, (char *) "[MAILBOX] BOOT ERROR", (char *) "Doors have been opened too long time when you have turned on the ESP32-CAM.\nReboot the ESP32-CAM for reinitialize it !");
+      sendMail(email_from, email_to, (char *) "[MAILBOX] BOOT ERROR", (char *) "Doors have been opened too long when you have turned on the ESP32-CAM.\nReboot the ESP32-CAM to reinitialize it !");
       // Going to sleep until reset or restart
       goToDeepSleepError();
     }
@@ -181,7 +181,7 @@ void loop()
         // Retreived Access Token
         retrieved_access_token_gmail(gmail_credentials_refresh_token, gmail_credentials_client_id, gmail_credentials_client_secret);
         // Send error mail by Gmail API
-        sendMail(email_from, email_to, (char *) "[MAILBOX] FETCH MAIL ERROR", (char *) "Doors have been opened too long time when you have fetched your mail.\nReboot the ESP32-CAM for reinitialize it !");
+        sendMail(email_from, email_to, (char *) "[MAILBOX] FETCH MAIL ERROR", (char *) "Doors have been opened too long when you have fetched your mail.\nReboot the ESP32-CAM to reinitialize it !");
         // Going to sleep until reset or restart
         goToDeepSleepError();
       }
@@ -215,7 +215,7 @@ void loop()
     // Retreived Access Token
     retrieved_access_token_gmail(gmail_credentials_refresh_token, gmail_credentials_client_id, gmail_credentials_client_secret);
     // Send error mail by Gmail API
-    sendMail(email_from, email_to, (char *) "[MAILBOX] POSTMAN ERROR", (char *) "Doors have been opened too long time by the postman.\nReboot the ESP32-CAM for reinitialize it !");
+    sendMail(email_from, email_to, (char *) "[MAILBOX] POSTMAN ERROR", (char *) "Doors have been opened too long by the postman.\nReboot the ESP32-CAM to reinitialize it !");
     // Something wrong, going to sleep until reset or restart
     goToDeepSleepError();
   }
