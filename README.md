@@ -7,9 +7,13 @@ I will not expose how to use a NodeMCU in this article, there are plenty of [tut
 
 **µc**: microcontroller
 
+<<<<<<< HEAD
 ## Contents table
 - [ESP32-CAM - Mailbox Notifier](#esp32-cam---mailbox-notifier)
   * [Contents table](#contents-table)
+=======
+- [ESP32-CAM - Mailbox Notifier](#esp32-cam---mailbox-notifier)
+>>>>>>> 286fa3cb0dffc2e3578766ee33b021dcdc7681bd
   * [Electronic materials](#electronic-materials)
   * [Prerequisites](#prerequisites)
     + [SD Card](#sd-card)
