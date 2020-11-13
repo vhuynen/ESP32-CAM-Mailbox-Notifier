@@ -235,7 +235,7 @@ In order to use this program out of the box, I have externalized all properties 
 
 The program uses the [ArduinoJSON](https://arduinojson.org/v6/api/) library to deserialize `SDCard.getJSonFromFile` the attributes from the configuration file and initialize `SDCard.initProperties` the variables.
 
-### OTA (Over The Air)
+### OTA - Over The Air
 
 In the same idea, I would have liked that the µc boots the first time with the binary program directly from the SDCard **/firmware/maibox.bin** rather than the [FDTI](https://en.wikipedia.org/wiki/FTDI).  This functionality works fine with an **ESP32 DEV KIT V1** but I have some trouble with the **NodeMCU ESP32 Wrover**. Get in touch if you have an idea of what is going wrong... Cf. function `updateFirmware` called in the `setup` function of the main program `ESP32CAM.ino`
 
@@ -388,15 +388,15 @@ In order to verify the normal operation of your camera's probe, I advise you to 
 
 ### Inside the Box
 
-![Inside of the mailbox](docs/gallery/inside.png)
+![Inside of the mailbox](gallery/inside.png)
 
 ### Power Supply
 
-![](docs/gallery/power_supply.png)
+![](/gallery/power_supply.png)
 
 ### Solar Panel
 
-![](docs/gallery/solar_panel.png)
+![](/gallery/solar_panel.png)
 
 
 
