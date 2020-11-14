@@ -7,13 +7,9 @@ I will not expose how to use a NodeMCU in this article, there are plenty of [tut
 
 **µc**: microcontroller
 
-<<<<<<< HEAD
 ## Contents table
 - [ESP32-CAM - Mailbox Notifier](#esp32-cam---mailbox-notifier)
   * [Contents table](#contents-table)
-=======
-- [ESP32-CAM - Mailbox Notifier](#esp32-cam---mailbox-notifier)
->>>>>>> 286fa3cb0dffc2e3578766ee33b021dcdc7681bd
   * [Electronic materials](#electronic-materials)
   * [Prerequisites](#prerequisites)
     + [SD Card](#sd-card)
@@ -307,7 +303,7 @@ This function is implemented in the file  `GmailAPI.ino` method `sendMail` with 
 The POST Request has been entirely composed manually as specified in the Google API specification [Uploading Attachments](https://developers.google.com/gmail/api/guides/uploads) . The main difficulty was to define the total `Content-Length` of the Request while taking into account the content of the picture which has been transcoded in Base64 before.
 
 The trick is to use the SD Card to transcode the picture in Base64 and to retrieve the output file size. No concerns about memory consumption of the µc. The program can send the content of the attachment by chunks as long as there are contents to send from the SD Card.
-I have benched my program and I can send more than 10 Mo in attachment... this takes a while about ten minutes but it works !  
+I have benched my program and I can send more than 10 Mo in attachment... this takes a while about ten minutes but it works !
 
 In my case, the picture weighs roughly 150 Ko and the µc takes at less 15 seconds to do this.
 It's widely efficient for my project.
@@ -320,7 +316,7 @@ In my project, I use a camera and a flash (LED built-in of the ESP32-CAM) to tak
 
 It's the reason why I choose to use the [deep sleep mode](https://lastminuteengineers.com/esp32-sleep-modes-power-consumption/) between two interrupts. Theoretically, the µc alone consumes 10 µA in deep sleep mode, in my case the ESP32-CAM consumes **3,7 mA** in real measure in deep sleep mode.
 
-When the system is woken up and do all tasks I have recorded a spike of 300 mA without the flash (Indeed, I can't change the scale of my ammeter while the flash is on) . Thus, with a battery 18650-30Q with a capacity of **3000 mAh** the system can be sufficent for **one month**. 
+When the system is woken up and do all tasks I have recorded a spike of 300 mA without the flash (Indeed, I can't change the scale of my ammeter while the flash is on) . Thus, with a battery 18650-30Q with a capacity of **3000 mAh** the system can be self-sufficient for **one month**. 
 
 <u>Hypothesis</u> :
 
@@ -337,7 +333,7 @@ To go further about how to use the [deep sleep mode](https://docs.espressif.com/
 
 ### SD Card in 1-bit SD mode
 
-One of the problem of the ESP32-CAM is the lack of free GPIOs after all of these used by the camera and the SD Card.  You can rapidly understand that the constructor has left GPIOs with particular behavior as [GPIO 0](https://randomnerdtutorials.com/esp32-pinout-reference-gpios/) on boot, [GPIO 13](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/sd_pullup_requirements.html#pull-up-conflicts-on-gpio13) with pull-up conflicts and [GPIO 4](https://randomnerdtutorials.com/esp32-cam-ai-thinker-pinout/) shared with the flashlight.  
+One of the problem of the ESP32-CAM is there are not enough free GPIO because the camera and the SD Card need to many of them.  You can rapidly understand that the constructor has left GPIOs with particular behavior as [GPIO 0](https://randomnerdtutorials.com/esp32-pinout-reference-gpios/) on boot, [GPIO 13](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/sd_pullup_requirements.html#pull-up-conflicts-on-gpio13) with pull-up conflicts and [GPIO 4](https://randomnerdtutorials.com/esp32-cam-ai-thinker-pinout/) shared with the flashlight.  
 
 > [**INFO**] Only GPIOs which have RTC functionality can be used as source wakeup: 0,2,4,12-15,25-27,32-39.
 
