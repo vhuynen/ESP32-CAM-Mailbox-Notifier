@@ -1,6 +1,6 @@
 # ESP32-CAM - Mailbox Notifier
 
-Mailbox Notifier is an autonomous system based on an ESP32 CAM that can take a picture from inside your mailbox when your have received a letter or parcel and send an email with the picture in attachment at a email address of your convenience.
+Mailbox Notifier is an autonomous system based on an ESP32 CAM that can take a picture from inside your mailbox when your have received a letter or parcel and send an email via Gmail APIs with the picture in attachment at a email address of your convenience.
 
 This project uses an ESP32 CAM Dev Board from AI Thinker with an OV2640 2MP Camera.
 I will not expose how to use a NodeMCU in this article, there are plenty of [tutorials](https://randomnerdtutorials.com/esp32-cam-video-streaming-face-recognition-arduino-ide/) and blogs about this topic on Internet.
