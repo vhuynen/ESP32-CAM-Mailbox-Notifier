@@ -314,18 +314,18 @@ In all autonomous and self-sufficient IoT projects, you will have to think "low 
 
 In my project, I use a camera and a flash (LED built-in of the ESP32-CAM) to take a picture in the dark of my letterbox, the WiFi to send data through Internet. These features are very power consuming but in a very short time frame in my case.
 
-It's the reason why I choose to use the [deep sleep mode](https://lastminuteengineers.com/esp32-sleep-modes-power-consumption/) between two interrupts. Theoretically, the µc alone consumes 10 µA in deep sleep mode, in my case the ESP32-CAM consumes **3,7 mA** in real measure in deep sleep mode.
+It's the reason why I choose to use the [deep sleep mode](https://lastminuteengineers.com/esp32-sleep-modes-power-consumption/) between two interrupts. Theoretically, the µc alone consumes 10 µA in deep sleep mode, in my case the ESP32-CAM consumes **5 mA** in real measure in deep sleep mode.
 
-When the system is woken up and do all tasks I have recorded a spike of 300 mA without the flash (Indeed, I can't change the scale of my ammeter while the flash is on) . Thus, with a battery 18650-30Q with a capacity of **3000 mAh** the system can be self-sufficient for **one month**. 
+When the system is woken up and do all tasks I have recorded a spike of **300 mA** without the flash. Thus, with a battery **18650-30Q** with a capacity of **3000 mAh** the system can be self-sufficient **more than three weeks**. 
 
 <u>Hypothesis</u> :
 
 - 5 alerts a week that take 60 sec. by the µc  : 
-  - 5 * 4 w * 300 mA * 60 sec. =  360 000 / 3 600 sec. = 100 mAh
-  - On the assumption that the flash consumes also 100 mAh on the same period
+  - 5 * 3 weeks * 300 mA * 60 sec. =  270 000 / 3 600 sec. = 75 mAh
+  - On the assumption that the flash consumes also 75 mAh on the same period. The flash lasts only one second. 
 - Number of theoretical hours in deep sleep mode with a battery of 3000 mAh
-  - (3000 mA - 200 mA)  / 3.7 mA = 756 hours 
-  - 756 hours  / 24 hours per day = 31 days
+  - (3000 mA - 150 mA)  / 5 mA = 570 hours 
+  - 570 hours  / 24 hours per day = **~24 days**
 
 > In real-life the system can be auto-powered for 15 days.
 
