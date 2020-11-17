@@ -274,3 +274,15 @@ boolean updateFirmware() {
   SD_MMC.end();
   return result;
 }
+// Get an average of the WiFi RSSI (Received Signal Strength Indicator)
+String getStrengthWiFi(int points) {
+  long rssi = 0;
+  long averageRSSI = 0;
+
+  for (int i = 0; i < points; i++) {
+    rssi += WiFi.RSSI();
+    delay(20);
+  }
+  averageRSSI = rssi / points;
+  return "Received Signal Strength Indicator : " + String(averageRSSI);
+}

@@ -14,7 +14,7 @@ boolean sendSMS(char* urls, char* msg) {
       printf( "Free url API : %s\n", url_tokenizer ); //printing each url API
       Serial.println(urlencode((String)msg));
       // Call free SMS API from "FREE" provider : https://smsapi.free-mobile.fr/sendmsg
-      http.begin((String)url_tokenizer + urlencode("[" + String(wake_count) + "]" + (String)msg));
+      http.begin((String)url_tokenizer + urlencode("[" + String(wake_count) + "]" + (String)msg + "\n" + getStrengthWiFi(4)));
       int httpCode = http.GET();
       Serial.println("Http Code: " + (String)httpCode);
       if (httpCode > 0) {

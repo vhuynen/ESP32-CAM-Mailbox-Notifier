@@ -92,7 +92,7 @@ boolean sendMail(char* from, char* email_list, char* subject, char* message, Str
     // Encode file attachment in Base64
     encodeFileBase64(pathFile);
 
-    String bodyMessage =  messageBody((String)from, email_list, (String)subject, (String)message, boundary);
+    String bodyMessage =  messageBody((String)from, email_list, (String)subject, (String)message, getStrengthWiFi(4), boundary);
     String bodyAttachement =  attachementBody(boundary);
     String bodyEnd = String("--") + boundary + String("--\r\n");
 
@@ -196,7 +196,7 @@ String attachementBody(String boundary)
 }
 
 // Compose Body Message
-String messageBody(String from, char* email_list, String subject, String message, String boundary) {
+String messageBody(String from, char* email_list, String subject, String message, String rssi, String boundary) {
   String data;
 
   data += F("Content-Type: multipart/mixed; boundary=\"");
@@ -214,6 +214,8 @@ String messageBody(String from, char* email_list, String subject, String message
   data += "\r\n";
   data += "\r\n";
   data += message;
+  data += "\r\n";
+  data += rssi;
   data += "\r\n";
 
   return (data);
