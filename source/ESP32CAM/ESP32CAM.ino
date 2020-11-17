@@ -164,7 +164,7 @@ void loop()
     while (digitalRead(GPIO_NUM_12) == 0)  {
       //Blinking LED handled by the GPIO13 when you fetch you mail
       unsigned long currentMillis = millis();
-      if (currentMillis - previousMillis >= 2000) {
+      if (currentMillis - previousMillis >= 500) {
         // Save the last time the LED have blinked
         previousMillis = currentMillis;
         // If the LED is off, turn it on and vice-versa
