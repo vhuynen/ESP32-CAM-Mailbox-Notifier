@@ -62,7 +62,7 @@ I will not expose how to use a NodeMCU in this article, there are plenty of [tut
 
   - I use it to notify the program that I am picking up my mail and thus avoid wasting battery energy by sending useless notification
 
--  LED (**GPIO13**) :
+- LED (**GPIO13**) :
 
   - The LED is blinking when the order from the Press Button is operated. The visual signal notifies the operator that his order has been taken into account by the µc.      
 
@@ -70,7 +70,7 @@ I will not expose how to use a NodeMCU in this article, there are plenty of [tut
 
   - The system can be kept alive **more than two weeks without external energy** and send more than twenty notifications via WiFi
 
--  Solar Panel, Solar LiPo Power Regulator and Battery Shield **V3** :
+- Solar Panel, Solar LiPo Power Regulator and Battery Shield **V3** :
 
   - The combination of these parts allows to recharge the battery
 
