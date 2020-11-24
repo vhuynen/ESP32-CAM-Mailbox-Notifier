@@ -36,6 +36,9 @@ char* filename_properties = "/mailbox.cfg";
 // Path for the Base64 temporary file
 String pathFileBase64 = "/tmp/encode.b64";
 
+// Flashlight
+#define canalPWM 7 // Free PWM channel
+
 // WiFi Properties
 boolean wifi_ip_static = false;
 char* wifi_ip = (char *) malloc(20);
@@ -70,6 +73,7 @@ char* sms_body_flip_door  = (char *) malloc(100);
 // Control properties
 long retry = 1; // For future use
 long overtime_open_door = 10000;
+int flashlight_intensity = 0;
 
 // Pin which is used when you fetch your mail
 int pinFetchMail = 16;
@@ -91,22 +95,32 @@ void setup()
     delay(1000);
   }
 
+  // Init properties from SD Card
+  initProperties(filename_properties);
+  // printAllProperties();
+
   // You can use GPIO13 only after release it by SD Card initialization in 1-bit SD mode
   pinMode (GPIO_NUM_13, OUTPUT);
   digitalWrite(GPIO_NUM_13, LOW);
 
   // Disable state flash light pin after wake up
   gpio_hold_dis(GPIO_NUM_4);
-  // Flash Light Pin
-  pinMode (GPIO_NUM_4, OUTPUT);
-
+  if (flashlight_intensity != 0) { // No flashlight
+    if (flashlight_intensity == 1) { // High intensity 
+      pinMode(GPIO_NUM_4, OUTPUT);
+    } else { // PWM intensity
+      // Initializing of the intensity of the flashlight built-in LED - GPIO4
+      ledcAttachPin(GPIO_NUM_4, canalPWM); // pin, channel
+      ledcSetup(canalPWM, 100000, 8); // channel, frequency, resolution
+    }
+  }
   // This feature don't work with ESP32 CAM, maybe for a future version
   // Only for the bootstrap, update the firmware from SD Card if a new one exists
   if (wake_count == -1) {
     if (updateFirmware()) {
       Serial.println("The firmware has been updated...");
       // Turn on built-in Led after update firmware successfully
-      pinMode (GPIO_NUM_33, OUTPUT);
+      pinMode(GPIO_NUM_33, OUTPUT);
       digitalWrite(GPIO_NUM_33, LOW);
       delay(3000);
       Serial.println("ESP32 Rebooting...");
@@ -131,18 +145,13 @@ void setup()
   //Serial.println(digitalRead(GPIO_NUM_12));
   digitalWrite(GPIO_NUM_12, HIGH);
 
-  // Init properties from SD Card
-  initProperties(filename_properties);
-  // printAllProperties();
   wake_count++;
-
 }
 
 void loop()
 {
   // When you turn on the controller a first time
   if (wake_count == 0) {
-    Serial.println(digitalRead(GPIO_NUM_12));
     if (digitalRead(GPIO_NUM_12) == 1) {
       // Only if all doors are closed
       goToDeepSleep();

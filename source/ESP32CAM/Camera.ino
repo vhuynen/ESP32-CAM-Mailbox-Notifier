@@ -71,7 +71,13 @@ void takeAndSavePicture(String path) {
   Serial.println("Ok!");
 
   // Turn on the Flash Light before taking the picture
-  digitalWrite(4, HIGH);
+  if (flashlight_intensity != 0) {
+    if (flashlight_intensity == 1) {
+      digitalWrite(4, HIGH);
+    } else {
+      ledcWrite(canalPWM, flashlight_intensity);
+    }
+  }
   // Take Picture with Camera
   camera_fb_t  * fb = esp_camera_fb_get();
 
@@ -81,7 +87,13 @@ void takeAndSavePicture(String path) {
   }
 
   // Turn off the Flash Light after taking the picture
-  digitalWrite(4, LOW);
+  if (flashlight_intensity != 0) {
+    if (flashlight_intensity == 1) {
+      digitalWrite(4, LOW);
+    } else {
+      ledcWrite(canalPWM, 0);
+    }
+  }
 
   // Save picture to microSD card
   // Initialize SD library

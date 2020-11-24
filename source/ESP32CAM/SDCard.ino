@@ -56,7 +56,6 @@ void initProperties(char* filename_properties) {
     strcpy(wifi_subnet, doc["wifi"]["subnet"].as<char*>()); // "Subnet"
     strcpy(wifi_dns_ip_primary, doc["wifi"]["dns_ip_primary"].as<char*>()); // "Subnet"
     strcpy(wifi_dns_ip_secondary, doc["wifi"]["dns_ip_secondary"].as<char*>()); // "Subnet"
-    Serial.println("Fin Chargement des Setting IP");
   }
   strcpy(wifi_ssid, doc["wifi"]["ssid"].as<char*>()); // "SSID"
   strcpy(wifi_security_code, doc["wifi"]["security_code"].as<char*>()); // "Passphrase"
@@ -86,6 +85,7 @@ void initProperties(char* filename_properties) {
   // Init control properties
   retry =  doc["control"]["retry"]; // Number of retry when the door is already open
   overtime_open_door = doc["control"]["overtime_open_door"]; // Timeout when one of door is open so long
+  flashlight_intensity = doc["control"]["flashlight_intensity"]; // Intensity of the flashlight (value between 0 to 4096)
 
   //printFile(filename_properties);
 //  SD_MMC.end();
