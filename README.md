@@ -42,6 +42,7 @@ I will not expose how to use a NodeMCU in this article, there are plenty of [tut
     + [Inside the Box](#inside-the-box)
     + [Power Supply](#power-supply)
     + [Solar Panel](#solar-panel)
+    + [Email notification](#email-notification)
 
 ## Electronic materials
 
@@ -441,5 +442,11 @@ In order to verify the normal operation of your camera's probe, I advise you to 
 ![](docs/gallery/solar_panel.png)
 
 
+
+### Email notification
+
+| Email                            | Picture in attachment         |
+| -------------------------------- | ----------------------------- |
+| ![](docs/gallery/screenshot.png) | ![](docs/gallery/mailbox.png) |
 
 So please feel free to give me your feedback and improvement !
