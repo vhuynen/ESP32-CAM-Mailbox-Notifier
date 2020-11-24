@@ -76,7 +76,7 @@ I will not expose how to use a NodeMCU in this article, there are plenty of [tut
 
   > The system can be kept alive over ten days with a single battery, if your want to extend this period I advise you to use two batteries thanks to a Shield V8. It can be interesting if you live in area not too sunny
   
-  Have a look on the electronic schematic on this link :  [Mailbox Notifier Electronic Diagram](docs/mailbox_ESP32CAM_AI_THINKER_v1.pdf)
+  Have a look on the electronic schematic on this link :  [Mailbox Notifier Electronic Diagram](docs/mailbox_ESP32CAM_AI_THINKER_v2.pdf)
 
 ## Prerequisites
 
@@ -195,7 +195,7 @@ Attribut **flashlight_intensity** :
 
 - **0** : the flashlight is **off**
 - **1** : the flashlight is **high**
-- **2** to **100** : you can set the flashlight intensity at your convenience thanks to a PWM (**P**ulse **W**idth Modulation) signal.
+- **2** to **100** : Thanks to a PWM (**P**ulse **W**idth Modulation) signal, you can set the flashlight intensity at your convenience. 
 
 ```c
 "control" : {
