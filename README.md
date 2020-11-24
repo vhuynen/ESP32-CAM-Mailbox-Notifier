@@ -76,7 +76,7 @@ I will not expose how to use a NodeMCU in this article, there are plenty of [tut
 
   > The system can be kept alive over ten days with a single battery, if your want to extend this period I advise you to use two batteries thanks to a Shield V8. It can be interesting if you live in area not too sunny
   
-  Have a look on the electronic schematic on this link :  [Mailbox Notifier Electronic Diagram](mailbox_ESP32CAM_AI_THINKER_v1.pdf)
+  Have a look on the electronic schematic on this link :  [Mailbox Notifier Electronic Diagram](docs/mailbox_ESP32CAM_AI_THINKER_v1.pdf)
 
 ## Prerequisites
 
@@ -189,12 +189,20 @@ This section is useful only for [Free](https://en.wikipedia.org/wiki/Free_(ISP))
 
 #### Control
 
-The attribute **overtime_open_door** is the timeout in **millisecond** that throws an exception if the door is always opened after the countdown. The countdown is triggered on boot or when the door has just been opened. 
+The attribute **overtime_open_door** is the timeout in **millisecond** that throws an exception if the door is always opened after the countdown. The countdown is triggered on boot or when the door has just been opened.
+
+Attribut **flashlight_intensity** :
+
+- **0** : the flashlight is **off**
+- **1** : the flashlight is **high**
+- **2** to **100** : you can set the flashlight intensity at your convenience thanks to a PWM (**P**ulse **W**idth Modulation) signal.
 
 ```c
 "control" : {
 	// Size max : 10
-	"overtime_open_door" : "20000"
+	"overtime_open_door" : "20000",
+	// Flashlight Intensity: 0 (Flashlight Off) / 1 (High intensity) / 2 to 100 (PWM scale intensity)
+	"flashlight_intensity" : "12"    
 }
 ```
 
