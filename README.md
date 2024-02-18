@@ -8,41 +8,42 @@ I will not expose how to use a NodeMCU in this article, there are plenty of [tut
 **µc**: microcontroller
 
 ## Table of contents
+
 - [ESP32-CAM - Mailbox Notifier](#esp32-cam---mailbox-notifier)
-  * [Table of contents](#table-of-contents)
-  * [Electronic materials](#electronic-materials)
-  * [Prerequisites](#prerequisites)
-    + [SD Card](#sd-card)
+  - [Table of contents](#table-of-contents)
+  - [Electronic materials](#electronic-materials)
+  - [Prerequisites](#prerequisites)
+    - [SD Card](#sd-card)
       - [Format](#format)
       - [Directory tree](#directory-tree)
-    + [Configuration File](#configuration-file)
+    - [Configuration File](#configuration-file)
       - [WiFi](#wifi)
       - [Gmail Credentials](#gmail-credentials)
       - [Email settings](#email-settings)
       - [SMS Settings](#sms-settings)
       - [Control](#control)
-    + [External antenna](#external-antenna)
-  * [How does it work ?](#how-does-it-work-)
-    + [Boot](#boot)
-    + [Fetch mail](#fetch-mail)
-    + [You have got mail](#you-have-got-mail)
-  * [Go further](#go-further)
-    + [JSON Config file on SD Card](#json-config-file-on-sd-card)
-    + [OTA - Over The Air](#ota---over-the-air)
-    + [Gmail API](#gmail-api)
+    - [External antenna](#external-antenna)
+  - [How does it work ?](#how-does-it-work-)
+    - [Boot](#boot)
+    - [Fetch mail](#fetch-mail)
+    - [You have got mail](#you-have-got-mail)
+  - [Go further](#go-further)
+    - [JSON Config file on SD Card](#json-config-file-on-sd-card)
+    - [OTA - Over The Air](#ota---over-the-air)
+    - [Gmail API](#gmail-api)
       - [Retrieve an Access Token](#retrieve-an-access-token)
       - [Send an email with attachment](#send-an-email-with-attachment)
-    + [Power Consumption](#power-consumption)
-    + [SD Card in 1-bit SD mode](#sd-card-in-1-bit-sd-mode)
-    + [WiFi](#wifi-1)
+    - [Power Consumption](#power-consumption)
+    - [SD Card in 1-bit SD mode](#sd-card-in-1-bit-sd-mode)
+    - [WiFi](#wifi-1)
       - [Power saving](#power-saving)
       - [Static IP Address](#static-ip-address)
-    + [Camera OV2640](#camera-ov2640)
-  * [Gallery](#gallery)
-    + [Inside the Box](#inside-the-box)
-    + [Power Supply](#power-supply)
-    + [Solar Panel](#solar-panel)
-    + [Email notification](#email-notification)
+    - [Camera OV2640](#camera-ov2640)
+  - [Gallery](#gallery)
+    - [Inside the Box](#inside-the-box)
+    - [Power Supply](#power-supply)
+    - [Solar Panel](#solar-panel)
+    - [Email notification](#email-notification)
 
 ## Electronic materials
 
@@ -65,7 +66,7 @@ I will not expose how to use a NodeMCU in this article, there are plenty of [tut
 
 - LED (**GPIO13**) :
 
-  - The LED is blinking when the order from the Press Button is operated. The visual signal notifies the operator that his order has been taken into account by the µc.      
+  - The LED is blinking when the order from the Press Button is operated. The visual signal notifies the operator that his order has been taken into account by the µc.
 
 - Battery 18650-30Q **3000 mAh** :
 
@@ -89,9 +90,9 @@ The SD Card should be formated in **FAT 32**.
 
 #### Directory tree
 
-The SD Card must have a directory tree like below : 
+The SD Card must have a directory tree like below :
 
-```
+``` txt
 .
 ├── mailbox.cfg (Configuration file)
 ├── /camera (The pictures are saved here)
@@ -115,22 +116,22 @@ It is possible to use a Static IP for your device. It is useful to avoid to exch
 
 In all cases, you will have to fill the **ssid** and **security_code** of your WiFi.
 
-```c
-"wifi" :{
-	// Size max :30
-	"ip_static" : "192.168.5.141",
-	// Size max :30 - mandatory if ip_static attribut
-	"gateway" : "192.168.5.1",
-	// Size max :30  - mandatory if ip_static attribut
-	"subnet" : "255.255.255.0",
-	// Size max :30	  - mandatory if ip_static attribut
-	"dns_ip_primary" : "192.168.5.1",
-	// Size max :30 - mandatory if ip_static attribut. Can be the same that dns_ip_primary attribute.
-	"dns_ip_secondary" : "192.168.5.1",
-	// Size max : 50 - mandatory
-	"ssid":"Your WIFi SSID",
-	// Size max : 50 - mandatory
-	"security_code":"Your Code"
+``` c
+  "wifi" :{
+    // Size max :30
+    "ip_static" : "192.168.5.141",
+    // Size max :30 - mandatory if ip_static attribut
+    "gateway" : "192.168.5.1",
+    // Size max :30  - mandatory if ip_static attribut
+    "subnet" : "255.255.255.0",
+    // Size max :30	  - mandatory if ip_static attribut
+    "dns_ip_primary" : "192.168.5.1",
+    // Size max :30 - mandatory if ip_static attribut. Can be the same that dns_ip_primary attribute.
+    "dns_ip_secondary" : "192.168.5.1",
+    // Size max : 50 - mandatory
+    "ssid":"Your WIFi SSID",
+    // Size max : 50 - mandatory
+    "security_code":"Your Code"
 }
 ```
 
@@ -139,13 +140,13 @@ In all cases, you will have to fill the **ssid** and **security_code** of your W
 In order to use Gmail RESTful API and to retrieve your credentials, you will have to set a new project in your GCP (Google Cloud Platform) account. You can follow all steps in this article : [How to retrieve a Refresh Token via Google Cloud Platform ?](https://github.com/vhuynen/GCP-Retreive-Offline-Refresh-Token/blob/master/README.md)  After that, you will have to fill in all attributes below.
 
 ```c
-"gmail_credentials" : {
-	// Size max : 150
-	"refresh_token":"OAuth Refresh Token retrieved for your Application Google Cloud Platform. One scope : https://www.googleapis.com/auth/gmail.send",
-	// Size max : 100
-	"client_id":"You Client Id from your Web Application",
-	// Size max : 50
-	"client_secret":"Your Client Secret from your Web Application"
+  "gmail_credentials" : {
+    // Size max : 150
+    "refresh_token":"OAuth Refresh Token retrieved for your Application Google Cloud Platform. One scope : https://www.googleapis.com/auth/gmail.send",
+    // Size max : 100
+    "client_id":"You Client Id from your Web Application",
+    // Size max : 50
+    "client_secret":"Your Client Secret from your Web Application"
 }
 ```
 
@@ -159,18 +160,17 @@ Finally, you can personalize your **subject** and **body** message.
 
 > For the **body_door** you will use the escape character **\n** to print a newline character.
 
-
 ```c
-"email" : {
-	// Size max : 50
-	"from":"vincent.huynen@gmail.com",
-	// Size max : 100
-    // "to":"vincent.huynen@gmail.com,huynen@gmail.com" Can be a list of mail addresses separator : ,
-	"to":"vincent.huynen@gmail.com",
-	// Size max : 100
-	"subject_door":"[Mailbox] You have got mail !",
-	// Size max : 150
-	"body_door":"You have probably received something today.\nHave a nice Day !"
+  "email" : {
+    // Size max : 50
+    "from":"vincent.huynen@gmail.com",
+    // Size max : 100
+      // "to":"vincent.huynen@gmail.com,huynen@gmail.com" Can be a list of mail addresses separator : ,
+    "to":"vincent.huynen@gmail.com",
+    // Size max : 100
+    "subject_door":"[Mailbox] You have got mail !",
+    // Size max : 150
+    "body_door":"You have probably received something today.\nHave a nice Day !"
 }
 ```
 
@@ -181,10 +181,10 @@ This section is useful only for [Free](https://en.wikipedia.org/wiki/Free_(ISP))
 > You can skip this section or better adapt code with a free SMS provider and I will be delighted to integrate your Pull Request.
 
 ```c
-"sms" : {
-    // Can be a list of URLs with comma separator.
-	"url" : "https://smsapi.free-mobile.fr/sendmsg?user=<Your Client ID>&pass=<Your API Key>&msg=",
-	"body_door" : "[Mailbox] You have got mail\nHave a Nice day !"
+  "sms" : {
+      // Can be a list of URLs with comma separator.
+    "url" : "https://smsapi.free-mobile.fr/sendmsg?user=<Your Client ID>&pass=<Your API Key>&msg=",
+    "body_door" : "[Mailbox] You have got mail\nHave a Nice day !"
 }
 ```
 
@@ -196,15 +196,15 @@ Attribut **flashlight_intensity** :
 
 - **0** : the flashlight is **off**
 - **1** : the flashlight is **high**
-- **2** to **100** : Thanks to a PWM (**P**ulse **W**idth Modulation) signal, you can set the flashlight intensity at your convenience. 
+- **2** to **100** : Thanks to a PWM (**P**ulse **W**idth Modulation) signal, you can set the flashlight intensity at your convenience.
 
 ```c
-"control" : {
-	// Size max : 10
-	"overtime_open_door" : "20000",
-	// Flashlight Intensity: 0 (Flashlight Off) / 1 (High intensity) / 2 to 100 (PWM scale intensity)
-	"flashlight_intensity" : "12"    
-}
+  "control" : {
+    // Size max : 10
+    "overtime_open_door" : "20000",
+    // Flashlight Intensity: 0 (Flashlight Off) / 1 (High intensity) / 2 to 100 (PWM scale intensity)
+    "flashlight_intensity" : "12"    
+  }
 ```
 
 ### External antenna
@@ -215,7 +215,7 @@ If you want to use an external antenna, you must unsolder the resistor just near
 
 ## How does it work ?
 
-The logic of the **loop()** function has 3 parts : 
+The logic of the **loop()** function has 3 parts :
 
 - **Boot** : when you reset or switch on the µc
 
@@ -259,7 +259,7 @@ After that, the µc is going to deep sleep without external interrupt. You will 
 
 The delivery man or the postman comes and opens the door. The reed switch signal wakes up the µc.
 
-If the door is closed before the timeout then the program takes a picture from inside the mailbox, sends an email with the photo in attachment. After that, the µc configures the reed switch as an external wakeup and goes in deep sleep mode. 
+If the door is closed before the timeout then the program takes a picture from inside the mailbox, sends an email with the photo in attachment. After that, the µc configures the reed switch as an external wakeup and goes in deep sleep mode.
 
 If the door is always opened after the timeout, the program sends an email with an error message :
 
@@ -268,7 +268,7 @@ If the door is always opened after the timeout, the program sends an email with 
 
 After that, the µc is going to deep sleep without external interrupt. You will have to restart the µc to re-initialize it.
 
-## Go further 
+## Go further
 
 The program has enough comments to understand the principal functions. But I want to review some interesting features that this program implements.
 
@@ -295,9 +295,9 @@ Rather than use SMTP Protocol to send email, I decided to use Gmail API for two 
 
 #### Retrieve an Access Token
 
-In order to call the Gmail API to send an email, you first need to retrieve an Access Token from your **offline Refresh Token** that you have retrieved in the section [gmail credential](#gmail-credentials). 
+In order to call the Gmail API to send an email, you first need to retrieve an Access Token from your **offline Refresh Token** that you have retrieved in the section [gmail credential](#gmail-credentials).
 
-Then, you can call the Gmail API with the Access Token in the "Authorization" request header field in order to use the "Bearer" authentication scheme to transmit the Access Token. 
+Then, you can call the Gmail API with the Access Token in the "Authorization" request header field in order to use the "Bearer" authentication scheme to transmit the Access Token.
 
 > A best practice is using the Access Token until it will be expired. In our case, it is unlikely that the program will need to reuse the token before 3600 seconds.
 >
@@ -325,15 +325,15 @@ In my project, I use a camera and a flash (LED built-in of the ESP32-CAM) to tak
 
 It's the reason why I choose to use the [deep sleep mode](https://lastminuteengineers.com/esp32-sleep-modes-power-consumption/) between two interrupts. Theoretically, the µc alone consumes 10 µA in deep sleep mode, in my case the ESP32-CAM consumes **5 mA** in real measure in deep sleep mode.
 
-When the system is woken up and do all tasks I have recorded a spike of **300 mA** without the flash. Thus, with a battery **18650-30Q** with a capacity of **3000 mAh** the system can be self-sufficient **more than three weeks**. 
+When the system is woken up and do all tasks I have recorded a spike of **300 mA** without the flash. Thus, with a battery **18650-30Q** with a capacity of **3000 mAh** the system can be self-sufficient **more than three weeks**.
 
 <u>Hypothesis</u> :
 
-- 5 alerts a week that take 60 sec. by the µc  : 
-  - 5 * 3 weeks * 300 mA * 60 sec. =  270 000 / 3 600 sec. = 75 mAh
-  - On the assumption that the flash consumes also 75 mAh on the same period. The flash lasts only one second. 
+- 5 alerts a week that take 60 sec. by the µc  :
+  - 5 x 3 weeks x 300 mA x 60 sec. =  270 000 / 3 600 sec. = 75 mAh
+  - On the assumption that the flash consumes also 75 mAh on the same period. The flash lasts only one second.
 - Number of theoretical hours in deep sleep mode with a battery of 3000 mAh
-  - (3000 mA - 150 mA)  / 5 mA = 570 hours 
+  - (3000 mA - 150 mA)  / 5 mA = 570 hours
   - 570 hours  / 24 hours per day = **~24 days**
 
 > In real-life the system can be auto-powered for 15 days.
@@ -418,9 +418,7 @@ IPAddress getIPAddressFromString(char* ipStr) {
 }
 ```
 
- 
-
-### Camera OV2640 
+### Camera OV2640
 
 To take a photo with the camera, I have followed this [tutorial](https://randomnerdtutorials.com/esp32-cam-take-photo-save-microsd-card/). I did not have any problems with the camera setup. I have simply adapted the code from this tutorial for my need.
 In order to verify the normal operation of your camera's probe, I advise you to test it with the schetch : `Example > ESP32 > Camera > CameraWebServer ` or to follow this [tutorial](https://randomnerdtutorials.com/esp32-cam-video-streaming-face-recognition-arduino-ide/).
@@ -435,18 +433,16 @@ In order to verify the normal operation of your camera's probe, I advise you to 
 
 ### Power Supply
 
-![](docs/gallery/power_supply.png)
+![mailbox](docs/gallery/mailbox.png)
 
 ### Solar Panel
 
-![](docs/gallery/solar_panel.png)
-
-
+![mailbox](docs/gallery/mailbox.png)
 
 ### Email notification
 
 | Email                            | Picture in attachment         |
 | -------------------------------- | ----------------------------- |
-| ![](docs/gallery/screenshot.png) | ![](docs/gallery/mailbox.png) |
+| ![screenshot](docs/gallery/screenshot.png) | ![mailbox](docs/gallery/mailbox.png) |
 
 So please feel free to give me your feedback and improvement !
