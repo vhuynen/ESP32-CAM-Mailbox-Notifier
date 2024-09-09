@@ -433,11 +433,11 @@ In order to verify the normal operation of your camera's probe, I advise you to 
 
 ### Power Supply
 
-![mailbox](docs/gallery/mailbox.png)
+![power_supply](docs/gallery/power_supply.png)
 
 ### Solar Panel
 
-![mailbox](docs/gallery/mailbox.png)
+![solar_panel](docs/gallery/solar_panel.png)
 
 ### Email notification
 
